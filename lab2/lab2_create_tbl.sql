@@ -196,3 +196,25 @@ INSERT INTO Theaters(name, nbrOfSeats) VALUES
 ("SF Örebro", 110),
 ("SF Örnsköldsvik", 90),
 ("SF Östersund", 80);
+
+INSERT INTO Performances(movieId, theaterId, day) SELECT Movies.id, Theaters.id, '2017-01-28' FROM Movies, Theaters
+WHERE Movies.name = "Arrival" AND Theaters.name = "SF Helsingborg";
+INSERT INTO Performances(movieId, theaterId, day) SELECT Movies.id, Theaters.id, '2017-01-28' FROM Movies, Theaters
+WHERE Movies.name = "Aquarius" AND Theaters.name = "SF Helsingborg";
+INSERT INTO Performances(movieId, theaterId, day) SELECT Movies.id, Theaters.id, '2017-01-28' FROM Movies, Theaters
+WHERE Movies.name = "Doctor Strange" AND Theaters.name = "SF Helsingborg";
+INSERT INTO Performances(movieId, theaterId, day) SELECT Movies.id, Theaters.id, '2017-01-28' FROM Movies, Theaters
+WHERE Movies.name = "Don't Breathe" AND Theaters.name = "SF Lund";
+INSERT INTO Performances(movieId, theaterId, day) SELECT Movies.id, Theaters.id, '2017-01-28' FROM Movies, Theaters
+WHERE Movies.name = "Jackie" AND Theaters.name = "SF Lund";
+
+INSERT INTO Performances(movieId, theaterId, day) SELECT Movies.id, Theaters.id, '2017-01-29' FROM Movies, Theaters
+WHERE Movies.name = "Arrival" AND Theaters.name = "SF Lund";
+INSERT INTO Performances(movieId, theaterId, day) SELECT Movies.id, Theaters.id, '2017-01-29' FROM Movies, Theaters
+WHERE Movies.name = "Aquarius" AND Theaters.name = "SF Lund";
+INSERT INTO Performances(movieId, theaterId, day) SELECT Movies.id, Theaters.id, '2017-01-29' FROM Movies, Theaters
+WHERE Movies.name = "Doctor Strange" AND Theaters.name = "SF Lund";
+INSERT INTO Performances(movieId, theaterId, day) SELECT Movies.id, Theaters.id, '2017-01-29' FROM Movies, Theaters
+WHERE Movies.name = "Don't Breathe" AND Theaters.name = "SF Helsingborg";
+INSERT INTO Performances(movieId, theaterId, day) SELECT Movies.id, Theaters.id, '2017-01-29' FROM Movies, Theaters
+WHERE Movies.name = "Jackie" AND Theaters.name = "SF Helsingborg";
