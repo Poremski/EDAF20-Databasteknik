@@ -238,5 +238,69 @@ FROM Performances, Users, Movies WHERE Performances.day = "2017-01-29"
 AND Performances.movieId = Movies.id AND Movies.name = "Aquarius" AND Users.username = "userÖA";
 
 -- List all movies that are shown
-SELECT p.movieId, p.day, m.name FROM Performances AS p INNER JOIN Movies AS m ON p.id = m.id;
+SELECT p.movieId, p.day, m.name FROM Performances AS p, Movies AS m WHERE p.movieId = m.id;
+
+-- List dates when a movie is shown
+-- -- Search on movie name:
+SELECT p.movieId, p.day, m.name FROM Performances AS p, Movies AS m WHERE m.name = "Arrival" AND p.movieId = m.id;
+-- -- Search on ID:
+SELECT p.movieId, p.day, m.name FROM Performances AS p, Movies AS m WHERE m.id = 5 AND p.movieId = m.id;
+
+-- List all data concerning a movie show
+-- -- Select by movie name:
+SELECT m.name, t.name, p.day FROM Movies AS m, Theaters AS t, Performances AS p
+WHERE m.id = p.movieId AND t.id = p.theaterId AND p.name = "Arrival";
+-- -- Select by ID:
+SELECT m.name, t.name, p.day FROM Movies AS m, Theaters AS t, Performances AS p
+WHERE m.id = p.movieId AND t.id = p.theaterId AND p.movieId = 5;
+
+--  Try to insert two movie theaters with the same name
+INSERT INTO Theaters(name, nbrOfSeats) VALUES ("SF Stockholm", 100); -- => Error: Duplicate entry.
+
+-- Insert a movie show in a theater that is not in the database
+INSERT INTO Performances(movieId, theaterId, day) SELECT Movies.id, Theaters.id, '2017-01-30' FROM Movies, Theaters
+WHERE Movies.name = "Jackie" AND Theaters.name = "SF Ramlösa"; -- => Query OK, 0 rows affected.
+
+-- Insert an already existing movie show into the database
+INSERT INTO Movies(name) VALUES ("Agnus Dei"); -- => Error: Duplicate entry.
+
+-- Insert an already existing movie show in a theater on the same day.
+INSERT INTO Performances(movieId, theaterId, day) SELECT Movies.id, Theaters.id, '2017-01-29' FROM Movies, Theaters
+WHERE Movies.name = "Jackie" AND Theaters.name = "SF Helsingborg"; -- => Error: Duplicate entry.
+
+-- Insert a movie that does not exist into a theater
+INSERT INTO Performances(movieId, theaterId, day) SELECT Movies.id, Theaters.id, '2017-01-31' FROM Movies, Theaters
+WHERE Movies.name = "ÖÖÖÖÖÖ" AND Theaters.name = "SF Helsingborg"; -- => Query OK, 0 rows affected.
+
+-- Do a reservation with a user which is not existing in the DB.
+INSERT INTO Reservations(performanceId, userId) SELECT Performances.id, Users.id
+FROM Performances, Users, Movies WHERE Performances.day = "2017-01-28"
+AND Performances.movieId = Movies.id AND Movies.name = "Doctor Strange" 
+AND Users.username = "userÖÖÖÖÖÖÖÖ"; -- => Query OK, 0 rows affected.
+
+-- Do a reservation with a existing user, but with a not existing movie
+INSERT INTO Reservations(performanceId, userId) SELECT Performances.id, Users.id
+FROM Performances, Users, Movies WHERE Performances.day = "2017-01-29"
+AND Performances.movieId = Movies.id AND Movies.name = "ÖÖÖÖÖÖÖÖÖ" 
+AND Users.username = "userÖA"; -- => Query OK, 0 rows affected.
+
+-- (9)
+-- En biljettreservation utförs genom följande steg:
+--	I.   Kontroll av tillgänglig plats.
+--	II.  Om det råder tillgänglighet på platser, utförs en reservation.
+--	III. Efter utförd reservation genomförs uppdatering av antalet tillgängliga platser.
+-- Vilket problem kan uppstå vid sammankörning av dessa steg med flera användare?
+--
+-- Scenariot som uppstår är när det finnd 1 (en) plats kvar.
+-- Användare A gör en reservation där kontroll av tillgängliga platser görs.
+-- Eftersom det i punkt I finns ledig plats, går man över till punkt II.
+-- I samma stund kommer anävndare B som väljer att lägga reservation.
+-- Användaren B kommer i punkt I få en ledig plats och går vidare till punkt II.
+-- Anändare A får sin reservation bokförd och tillgängligheten ändras till 0 (noll).
+-- Användare B får sin reservation bokförd och tillgängliheten ändras till -1 (överförsäljning).
+-- Vi kommer därmed få en s.k. "race hazard" eller "race condition".
+--
+-- (10)
+-- DBM tillhandahåller olika former av isolering av sql-körning som gör att dessa konflikter förhindras.
+-- Ett exempel vore att tillämpa "BEGIN TRANSACTION" föjt av SQL-koden varefter det avslutas med "COMMIT".
 
