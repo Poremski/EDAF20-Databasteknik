@@ -237,4 +237,6 @@ INSERT INTO Reservations(performanceId, userId) SELECT Performances.id, Users.id
 FROM Performances, Users, Movies WHERE Performances.day = "2017-01-29"
 AND Performances.movieId = Movies.id AND Movies.name = "Aquarius" AND Users.username = "userÖA";
 
+-- List all movies that are shown
+SELECT p.movieId, p.day, m.name FROM Performances AS p INNER JOIN Movies AS m ON p.id = m.id;
 
