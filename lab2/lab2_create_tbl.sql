@@ -98,8 +98,42 @@ INSERT INTO Shows(movieName, day, freeSeats, theaterName) VALUES
 ("Arrival", '2017-02-04', 40, "SF Helsingborg"),
 ("Passengers", '2017-02-05', 40, "SF Helsingborg");
 
-INSERT INTO Reservations(username, movieName, theaterName, day) VALUES
-("kalle", "Trolls", "SF Helsingborg", "2017-02-02"),
-("kalle", "Aquarius", "SF Stockholm", "2017-02-02"),
-("kalle", "Arrival", "SF Göteborg", "2017-02-02");
+-- Create a reservation
+INSERT INTO Reservations(username, movieName, theaterName, day) VALUES ("kalle", "Trolls", "SF Helsingborg", "2017-02-02");
+INSERT INTO Reservations(username, movieName, theaterName, day) VALUES ("kalle", "Aquarius", "SF Stockholm", "2017-02-02");
+INSERT INTO Reservations(username, movieName, theaterName, day) VALUES ("kalle", "Arrival", "SF Göteborg", "2017-02-02");
+
+-- List all movies that are shown
+SELECT * FROM Shows;
+
+-- List dates when a movie is shown
+SELECT * FROM Shows WHERE movieName = "Arrival";
+
+--  Try to insert two movie theaters with the same name
+INSERT INTO Theaters(name, seats) VALUES ("SF Stockholm", 100); -- Error: Duplicate entry.
+
+-- Insert a movie show in a theater that is not in the database
+INSERT INTO Shows(movieName, day, freeSeats, theaterName) VALUES
+("Aquarius", '2017-02-06', 10, "SF Lund"); -- Error: foreign key constraint fails.
+
+
+-- (9)
+-- En biljettreservation utförs genom följande steg:
+--	I.   Kontroll av tillgänglig plats.
+--	II.  Om det råder tillgänglighet på platser, utförs en reservation.
+--	III. Efter utförd reservation genomförs uppdatering av antalet tillgängliga platser.
+-- Vilket problem kan uppstå vid sammankörning av dessa steg med flera användare?
+--
+-- Scenariot som uppstår är när det finnd 1 (en) plats kvar.
+-- Användare A gör en reservation där kontroll av tillgängliga platser görs.
+-- Eftersom det i punkt I finns ledig plats, går man över till punkt II.
+-- I samma stund kommer anävndare B som väljer att lägga reservation.
+-- Användaren B kommer i punkt I få en ledig plats och går vidare till punkt II.
+-- Anändare A får sin reservation bokförd och tillgängligheten ändras till 0 (noll).
+-- Användare B får sin reservation bokförd och tillgängliheten ändras till -1 (överförsäljning).
+-- Vi kommer därmed få en s.k. "race hazard" eller "race condition".
+--
+-- (10)
+-- DBM tillhandahåller olika former av isolering av sql-körning som gör att dessa konflikter förhindras.
+-- Ett exempel vore att tillämpa "BEGIN TRANSACTION" föjt av SQL-koden varefter det avslutas med "COMMIT".
 
