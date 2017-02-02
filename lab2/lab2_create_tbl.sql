@@ -39,25 +39,27 @@ CREATE TABLE Theaters (
 
 DROP TABLE IF EXISTS Shows;
 CREATE TABLE Shows (
-	movieName VARCHAR(50) NOT NULL UNIQUE,
+	movieName VARCHAR(50) NOT NULL,
 	day DATE NOT NULL,
 	freeSeats INT NOT NULL,
-	theaterName VARCHAR(20) NOT NULL UNIQUE,
+	theaterName VARCHAR(20) NOT NULL,
 	PRIMARY KEY (movieName, day),
-	FOREIGN KEY (theaterName) REFERENCES Theater(name)
+	FOREIGN KEY (theaterName) REFERENCES Theaters(name),
+	CONSTRAINT perDay UNIQUE (movieName, day)
 );
 
 DROP TABLE IF EXISTS Reservations;
 CREATE TABLE Reservations (
 	nbr INT NOT NULL AUTO_INCREMENT,
-	username VARCHAR(20) NOT NULL UNIQUE,
-	movieName VARCHAR(50) NOT NULL UNIQUE,
-	theaterName VARCHAR(20) NOT NULL UNIQUE,
+	username VARCHAR(20) NOT NULL,
+	movieName VARCHAR(50) NOT NULL,
+	theaterName VARCHAR(20) NOT NULL,
 	day DATE NOT NULL,
 	PRIMARY KEY (nbr),
 	FOREIGN KEY (username) REFERENCES Users(username),
 	FOREIGN KEY (movieName, day) REFERENCES Shows(movieName, day),
-	FOREIGN KEY (theaterName) REFERENCES Theaters(name)
+	FOREIGN KEY (theaterName) REFERENCES Theaters(name),
+	CONSTRAINT perPerformance UNIQUE (movieName, username)
 );
 
 SET foreign_key_checks = 1;
@@ -69,7 +71,35 @@ INSERT INTO Users(username, name, phoneNbr, address) VALUES
 ("olle", "Olof Olofsson", "076-123 456 78", NULL),
 ("bibbi", "Birgitta Birgitsson", "079-123 456 78", NULL);
 
---
+INSERT INTO Theaters(name, seats) VALUES
+("SF Stockholm", 100),
+("SF Göteborg", 80),
+("SF Malmö", 60),
+("SF Helsingborg", 40);
 
+INSERT INTO Shows(movieName, day, freeSeats, theaterName) VALUES
+("Aquarius", '2017-02-02', 100, "SF Stockholm"),
+("Arrival", '2017-02-03', 100, "SF Stockholm"),
+("Passengers", '2017-02-04', 100, "SF Stockholm"),
+("Trolls", '2017-02-05', 100, "SF Stockholm"),
 
+("Arrival", '2017-02-02', 80, "SF Göteborg"),
+("Passengers", '2017-02-03', 80, "SF Göteborg"),
+("Trolls", '2017-02-04', 80, "SF Göteborg"),
+("Aquarius", '2017-02-05', 80, "SF Göteborg"),
+
+("Passengers", '2017-02-02', 60, "SF Malmö"),
+("Trolls", '2017-02-03', 60, "SF Malmö"),
+("Aquarius", '2017-02-04', 60, "SF Malmö"),
+("Arrival", '2017-02-05', 60, "SF Malmö"),
+
+("Trolls", '2017-02-02', 40, "SF Helsingborg"),
+("Aquarius", '2017-02-03', 40, "SF Helsingborg"),
+("Arrival", '2017-02-04', 40, "SF Helsingborg"),
+("Passengers", '2017-02-05', 40, "SF Helsingborg");
+
+INSERT INTO Reservations(username, movieName, theaterName, day) VALUES
+("kalle", "Trolls", "SF Helsingborg", "2017-02-02"),
+("kalle", "Aquarius", "SF Stockholm", "2017-02-02"),
+("kalle", "Arrival", "SF Göteborg", "2017-02-02");
 
