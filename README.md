@@ -1,1 +1,0 @@
-# EDAF20-Databasteknik
